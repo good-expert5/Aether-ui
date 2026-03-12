@@ -6,10 +6,14 @@ local Tab = aetherrequire("./Components/Tab")
 local Window = {}
 Window.__index = Window
 
-function Window.New(title)
+-- Modified to accept config (for Size selection)
+function Window.New(title, config)
     local self = setmetatable({}, Window)
     self.Tabs = {}
     self.CurrentTab = nil
+    
+    -- Default to 919x536 if no size is provided in config
+    local customSize = config and config.Size or UDim2.new(0, 919, 0, 536)
     
     self.ScreenGui = Creator.New("ScreenGui", {
         Name = "Aether.ScriptUI",
@@ -26,8 +30,8 @@ function Window.New(title)
         BorderSizePixel = 0,
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Size = UDim2.new(1.00042, 0, 1.0007, 0),
-        Position = UDim2.new(0.49979, 0, 0.49965, 0),
+        Size = UDim2.new(1, 0, 1, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
         BackgroundTransparency = 1
     })
 
@@ -36,8 +40,9 @@ function Window.New(title)
         Parent = self.UI,
         BorderSizePixel = 0,
         BackgroundColor3 = Theme.Colors.MainBg,
-        Size = UDim2.new(0, 919, 0, 536),
-        Position = UDim2.new(0.11588, 0, 0.1147, 0)
+        Size = customSize, -- Applied custom size
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5) -- Centered for better scaling
     }, {
         Creator.New("UICorner", { CornerRadius = UDim.new(0, 20) }),
         Creator.New("UIStroke", {
@@ -61,8 +66,8 @@ function Window.New(title)
         Parent = self.Main,
         BorderSizePixel = 0,
         BackgroundColor3 = Theme.Colors.SidebarBg,
-        Size = UDim2.new(0, 270, 0, 536),
-        Position = UDim2.new(0.01632, 0, 0, 0),
+        Size = UDim2.new(0.293, 0, 1, 0), -- Scale width relative to Main
+        Position = UDim2.new(0.016, 0, 0, 0),
         BackgroundTransparency = 1
     }, {
         Creator.New("ImageLabel", {
@@ -71,7 +76,7 @@ function Window.New(title)
             Image = Theme.Assets.ControllerLogo,
             Size = UDim2.new(0, 80, 0, 60),
             BackgroundTransparency = 1,
-            Position = UDim2.new(0.0283, 0, 0.05597, 0),
+            Position = UDim2.new(0.028, 0, 0.056, 0),
             BorderSizePixel = 0
         })
     })
@@ -81,17 +86,17 @@ function Window.New(title)
         Parent = self.SideFrame,
         Active = true,
         BorderSizePixel = 0,
-        CanvasSize = UDim2.new(0, 0, 1.5, 0),
+        CanvasSize = UDim2.new(0, 0, 0, 0),
         VerticalScrollBarInset = Enum.ScrollBarInset.Always,
         BackgroundColor3 = Theme.Colors.SidebarBg,
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        Size = UDim2.new(0, 270, 0, 341),
-        Position = UDim2.new(0, 0, 0.25373, 0),
+        Size = UDim2.new(1, 0, 0.636, 0),
+        Position = UDim2.new(0, 0, 0.254, 0),
         ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0),
         ScrollBarThickness = 0,
         BackgroundTransparency = 1
     }, {
-        Creator.New("UIListLayout", { Padding = UDim.new(0.0175, 0), SortOrder = Enum.SortOrder.LayoutOrder }),
+        Creator.New("UIListLayout", { Padding = UDim.new(0.017, 0), SortOrder = Enum.SortOrder.LayoutOrder }),
         Creator.New("UIPadding", { PaddingTop = UDim.new(0.006, 0), PaddingLeft = UDim.new(0.03, 0) })
     })
 
@@ -100,8 +105,8 @@ function Window.New(title)
         Parent = self.Main,
         BorderSizePixel = 0,
         BackgroundColor3 = Theme.Colors.SeparatorDark,
-        Size = UDim2.new(0, 3, 0, 496),
-        Position = UDim2.new(0.32862, 0, 0.03731, 0)
+        Size = UDim2.new(0, 3, 0.925, 0),
+        Position = UDim2.new(0.328, 0, 0.037, 0)
     }, {
         Creator.New("CanvasGroup", {
             Name = "Fader1",
@@ -116,7 +121,7 @@ function Window.New(title)
             BorderSizePixel = 0,
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
             Size = UDim2.new(0, 3, 0, 100),
-            Position = UDim2.new(0, 0, 0.79839, 0)
+            Position = UDim2.new(0, 0, 0.798, 0)
         }, {
             Creator.New("UIGradient", { Rotation = -90, Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)}, Color = ColorSequence.new(Theme.Colors.MainBg) })
         })
@@ -127,18 +132,19 @@ function Window.New(title)
         Parent = self.Main,
         BorderSizePixel = 0,
         BackgroundColor3 = Theme.Colors.SidebarBg,
-        Size = UDim2.new(0, 556, 0, 449),
-        Position = UDim2.new(0.36344, 0, 0.16135, 0),
+        Size = UDim2.new(0.605, 0, 0.837, 0),
+        Position = UDim2.new(0.363, 0, 0.161, 0),
         BackgroundTransparency = 1
     })
 
+    -- Faders adjusted to be child of Main and scale
     Creator.New("CanvasGroup", {
         Name = "SideFrameFader",
         Parent = self.Main,
         BorderSizePixel = 0,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        Size = UDim2.new(0.34788, 0, 0.34359, 0),
-        Position = UDim2.new(0.01748, 0, 0.65639, 0)
+        Size = UDim2.new(0.347, 0, 0.343, 0),
+        Position = UDim2.new(0.017, 0, 0.656, 0)
     }, {
         Creator.New("UIGradient", { Rotation = -90, Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)}, Color = ColorSequence.new(Theme.Colors.MainBg) })
     })
@@ -148,8 +154,8 @@ function Window.New(title)
         Parent = self.Main,
         BorderSizePixel = 0,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        Size = UDim2.new(0, 566, 0, 184),
-        Position = UDim2.new(0.36243, 0, 0.65812, 0)
+        Size = UDim2.new(0.615, 0, 0.343, 0),
+        Position = UDim2.new(0.362, 0, 0.658, 0)
     }, {
         Creator.New("UIGradient", { Rotation = -90, Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)}, Color = ColorSequence.new(Theme.Colors.MainBg) })
     })
