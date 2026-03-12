@@ -14,64 +14,92 @@ Section.__index = Section
 function Section.New(parentColumn, title, icon, layoutOrder)
     local self = setmetatable({}, Section)
     
-    -- allow callers to supply a layout order for the section container; useful
-    -- when multiple sections are placed in a column so they stack in the
-    -- expected order.  If none is provided we fall back to 0 (which means
-    -- the list layout will use insertion order, but it's better to pass a value).
-    self.Container = Creator.New("Frame", {
-        Name = "SectionContainer",
+    -- This is the Main Wrapper for the whole section
+    self.Main = Creator.New("Frame", {
+        Name = title .. "Section",
         Parent = parentColumn,
-        ZIndex = -50,
         BorderSizePixel = 0,
         BackgroundColor3 = Theme.Colors.SidebarBg,
-        AutomaticSize = Enum.AutomaticSize.XY,
+        AutomaticSize = Enum.AutomaticSize.Y, -- Only Y scales
+        Size = UDim2.new(1, 0, 0, 0), -- Take full width of column
         BackgroundTransparency = 1,
         LayoutOrder = layoutOrder or 0
     }, {
-        Creator.New("UIListLayout", { Padding = UDim.new(0, 20), SortOrder = Enum.SortOrder.LayoutOrder })
+        Creator.New("UIListLayout", { 
+            Padding = UDim.new(0, 10), -- Space between Header and Elements
+            SortOrder = Enum.SortOrder.LayoutOrder 
+        })
     })
 
+    -- 1. THE HEADER (The Dropdown Button)
     if title then
-        -- header button should share the same layout order so it stays at the
-        -- top of the section; past versions hard‑coded 0 which caused all
-        -- headers to collide when multiple sections were added.
-        self.Header = Button.New(self.Container, {
+        self.Header = Button.New(self.Main, {
             Name = title,
             Icon = icon,
-            LayoutOrder = layoutOrder or 0,
-            InstanceName = "SectionButton"
+            LayoutOrder = 0,
+            InstanceName = "SectionHeader"
         })
+
+        -- Toggle Logic: When header is clicked, show/hide the content
+        -- Note: This assumes your Button element has an 'Instance' or 'Frame' property
+        local headerBtn = self.Header.Instance or self.Header.Frame or self.Header
+        if headerBtn:IsA("GuiButton") or headerBtn:FindFirstChildWhichIsA("GuiButton", true) then
+            local actualBtn = headerBtn:IsA("GuiButton") and headerBtn or headerBtn:FindFirstChildWhichIsA("GuiButton", true)
+            
+            actualBtn.MouseButton1Click:Connect(function()
+                self.Content.Visible = not self.Content.Visible
+            end)
+        end
     end
+
+    -- 2. THE CONTENT CONTAINER (Where elements actually go)
+    self.Content = Creator.New("Frame", {
+        Name = "SectionContent",
+        Parent = self.Main,
+        BorderSizePixel = 0,
+        BackgroundTransparency = 1,
+        AutomaticSize = Enum.AutomaticSize.Y,
+        Size = UDim2.new(1, 0, 0, 0),
+        LayoutOrder = 1,
+        Visible = true -- Default to open
+    }, {
+        Creator.New("UIListLayout", { 
+            Padding = UDim.new(0, 8), -- Space between individual toggles/sliders
+            SortOrder = Enum.SortOrder.LayoutOrder 
+        }),
+        Creator.New("UIPadding", { PaddingLeft = UDim.new(0, 10) }) -- Indent elements slightly
+    })
 
     return self
 end
 
+-- All elements now use self.Content as the parent
 function Section:CreateButton(config)
-    return Button.New(self.Container, config)
+    return Button.New(self.Content, config)
 end
 
 function Section:CreateToggle(config)
-    return Toggle.New(self.Container, config)
+    return Toggle.New(self.Content, config)
 end
 
 function Section:CreateSlider(config)
-    return Slider.New(self.Container, config)
+    return Slider.New(self.Content, config)
 end
 
 function Section:CreateDropdown(config)
-    return Dropdown.New(self.Container, config)
+    return Dropdown.New(self.Content, config)
 end
 
 function Section:CreateLabel(config)
-    return Label.New(self.Container, config)
+    return Label.New(self.Content, config)
 end
 
 function Section:CreateParagraph(config)
-    return Paragraph.New(self.Container, config)
+    return Paragraph.New(self.Content, config)
 end
 
 function Section:CreateColorPicker(config)
-    return ColorPicker.New(self.Container, config)
+    return ColorPicker.New(self.Content, config)
 end
 
 return Section
