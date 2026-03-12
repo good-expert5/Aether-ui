@@ -4,7 +4,8 @@ local Theme = aetherrequire("./Utility/Theme")
 local Column = {}
 Column.__index = Column
 
-function Column.New(parent, name, position)
+-- Added 'size' as a 4th argument
+function Column.New(parent, name, position, size)
     local self = setmetatable({}, Column)
     
     self.Frame = Creator.New("ScrollingFrame", {
@@ -16,7 +17,8 @@ function Column.New(parent, name, position)
         VerticalScrollBarInset = Enum.ScrollBarInset.Always,
         BackgroundColor3 = Theme.Colors.SidebarBg,
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        Size = UDim2.new(0, 263, 0, 389),
+        -- Use the passed size, or fall back to your default 263, 389
+        Size = size or UDim2.new(0, 263, 0, 389), 
         Position = position,
         ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0),
         ScrollBarThickness = 0,
