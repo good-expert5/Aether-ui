@@ -1,4 +1,4 @@
-local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/vendettawashere/aetherui/main/init.lua"))()
+local AetherUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/good-expert5/Aetherum-ui/main/init.lua"))()
 
 local Window = AetherUI.New("Aether Script Hub")
 
