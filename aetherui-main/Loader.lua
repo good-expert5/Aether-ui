@@ -5,7 +5,7 @@ end
 getgenv().AetherCache = {}
 
 getgenv().aetherrequire = function(path)
-    local baseUrl = "https://raw.githubusercontent.com/good-expert5/Aether-ui/main/"
+    local baseUrl = "https://raw.githubusercontent.com/good-expert5/Aether-ui/aetherui-main/"
     local formattedPath = string.gsub(path, "^%./", "")
     local url = baseUrl .. formattedPath .. ".lua"
     
