@@ -1,4 +1,4 @@
-local loaderUrl = "https://raw.githubusercontent.com/good-expert5/Aether-ui/aetherui-main/Loader.lua"
+local loaderUrl = "https://raw.githubusercontent.com/good-expert5/Aether-ui/main/aetherui-main/Loader.lua"
 if not getgenv().aetherrequire then
     loadstring(game:HttpGet(loaderUrl))()
 end
